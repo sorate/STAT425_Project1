@@ -24,7 +24,9 @@ column_names = c("ID", "psalevel", "cancervolume","prostateweight","age", "hyper
 prostate_data = read.table("prostate.txt", col.names = column_names)
 prostate_data = as_tibble(prostate_data)
 
-prostate_data
+
+prostate_data.relevant = prostate_data %>% select(-c("ID","cancervolume"))
+prostate_data.relevant
 
 ```
 
