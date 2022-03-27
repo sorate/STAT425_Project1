@@ -1,30 +1,80 @@
 ---
-title: "project_1"
-author: "Pratheek Eravelli & Bhatnagar Kanav"
+title: "Case Study"
+author: "Pratheek Eravelli & Kanav Bhatnagar"
 date: "3/26/2022"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Project Setup
+
+We will use the following packages for this homework assignment.  We will also read in data from the csv file.
+
+```{r setup}
+library(ggplot2)
+prostate = read.table('prostate.txt', header = FALSE)
 ```
 
-## R Markdown
+Now, we add labels to the columns.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r adding_labels}
+colnames(prostate) = c('ID', 'psalevel', 'cancervolume', 'prostateweight', 
+                       'age', 'hyperplasia', 'svi', 'capsular', 'gleason')
+head(prostate)
 ```
 
-## Including Plots
+# Analysis
 
-You can also embed plots, for example:
+## Building the initial model
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+First, we build a regression model with the required variables, and look at the summary statistics.
+
+```{r lm}
+prostate_lm = lm(psalevel ~ cancervolume + age + hyperplasia + svi + capsular + gleason,
+                 data = prostate)
+summary(prostate_lm)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Manual model selection
+
+We can see in the summary for the linear model that capsular penetration, i.e. `capsular` is the least significant variable since it has the highest *p*-value, which is over 0.05. We fit another linear model by removing this variable.
+
+```{r rm_var1}
+prostate_lm_reduced_1 = lm(psalevel ~ cancervolume + age + hyperplasia + svi + gleason,
+                         data = prostate)
+summary(prostate_lm_reduced_1)
+```
+
+Again, we notice that patient age, i.e. `age` is the least significant since it has the highest *p*-value, which is over 0.05. We fit another linear model by removing this variable.
+
+```{r rm_var2}
+prostate_lm_reduced_2 = lm(psalevel ~ cancervolume + hyperplasia + svi + gleason,
+                           data = prostate)
+summary(prostate_lm_reduced_2)
+```
+
+Now, we notice that the amount of benign prostatic hyperplasia, i.e. `hyperplasia` is the least significant since it has the highest *p*-value, which is over 0.05. We fit another linear model by removing this variable.
+
+```{r rm_var3}
+prostate_lm_reduced_3 = lm(psalevel ~ cancervolume + svi + gleason,
+                           data = prostate)
+summary(prostate_lm_reduced_3)
+```
+
+Finally, we notice that the Gleason score, i.e. `gleason` is the least significant since it has the highest *p*-value, which is over 0.05. We fit another linear model by removing this variable.
+
+```{r rm_var4}
+prostate_lm_reduced_4 = lm(psalevel ~ cancervolume + svi,
+                           data = prostate)
+summary(prostate_lm_reduced_4)
+```
+
+We see that all the variables in the model have a *p*-value less than 0.05, which means that their slopes are all statistically significant, and they contribute to explaining the variation in the response.
+
+Thus, the final model we have is `psalevel =` `r prostate_lm_reduced_4$coefficients[1]` + `r prostate_lm_reduced_4$coefficients[2]` $\cdot$ `cancervolume` + `r prostate_lm_reduced_4$coefficients[3]` $\cdot$ `svi`.
+
+
+## Unusual observations
+
+
+## Model assumptions
+
