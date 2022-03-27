@@ -24,8 +24,8 @@ column_names = c("ID", "psalevel", "cancervolume","prostateweight","age", "hyper
 prostate_data = read.table("prostate.txt", col.names = column_names)
 prostate_data = as_tibble(prostate_data)
 
-
-prostate_data.relevant = prostate_data %>% select(-c("ID","cancervolume"))
+# Using dplyr we remove ID & cancervolume from the data set
+prostate_data.relevant = prostate_data %>% select(-c("ID","cancervolume")) 
 prostate_data.relevant
 
 ```
@@ -35,7 +35,7 @@ prostate_data.relevant
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+plot(psalevel ~ ., data = prostate_data.relevant)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
