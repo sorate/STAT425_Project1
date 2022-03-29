@@ -11,6 +11,8 @@ We will use the following packages for this homework assignment.  We will also r
 
 ```{r setup}
 library(ggplot2)
+library(lmtest)
+library(MASS)
 prostate = read.table('prostate.txt', header = FALSE)
 ```
 
@@ -76,6 +78,7 @@ Thus, the final model we have is `psalevel =` `r prostate_lm_reduced_4$coefficie
 
 ## Unusual observations
 
+### High Leverage Points
 We will first look at identifying high leverage points. 
 ```{r high_leverage}
 n = dim(prostate)[1] # Sample Size 
@@ -119,12 +122,15 @@ leverage_range
 From the output above we can observe that none of the high leverage points can be considered "bad" high leverage points. 
 
 
+### Outliers 
 
 Now let us discuss OUTLIERS in the data:
-(1) We must find sudentized residuals residuals
-(2) Compute the bonferroni critical value
-(3) See if the residuals are greater than the absolute values of the conferroni critical value.
-(4) If any are then these are deemed as outliers in the data.
+
+1. We must find the studentized residuals.
+2. Compute the bonferroni critical value using the number of observations and the number of parameters.
+3. See if any of the residuals are greater than the absolute values of the bonferroni critical value.
+4. If any are, then these are deemed as outliers in the data.
+
 ```{r outliers}
 psa_residuals = rstudent(chosen_model)
 
@@ -139,19 +145,44 @@ bonferroni_cv
 From the above analysis we can see that only points 96 and 97 of the original data set are considered outliers. 
 
 
+### Influential Points
 Now let us discuss influential points in the data:
-(1)We must calculate the cooks distance for each point and see if there are any points with a distance greater than 1.
+We must calculate the cooks distance for each point and see if there are any points with a distance greater than 1.
 ```{r cooks_distance}
 prostate_cooks = cooks.distance(chosen_model)
 sort(prostate_cooks, decreasing = TRUE)[1:10]
 
-plot(prostate_cooks)
-
 ```
+\newline
 From the above analysis we can see that point 97 is all three things.
 Point 97 is a high leverage point, an outlier, and it is a highly influential points.
 
-This is the only point that has this characteristic in the actual model. 
+This is the only point that has this characteristic in the finally selected model. 
+We will not be removing this point but we will think about it in the context of model assumptions. 
 
+\newpage
 ## Model assumptions
+
+### Constant Variance
+We will now look at the constant variance assumption of the reduced model. 
+
+
+```{r constant variance}
+plot(chosen_model, which = 1)
+
+
+```
+The values of the residuals do not appear to be constant along the 0 line. It appears that 
+the variance increases as we move along the x axis which is not good for the constant variance assumption.
+
+We must now prove using *bp* test that we are operating under constant variance  
+
+```{r }
+bptest(chosen_model)
+```
+Because we have a p-value less than 0.05 we reject the assumption of constant variance for this data. 
+
+
+
+
 
