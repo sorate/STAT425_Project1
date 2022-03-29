@@ -2,7 +2,7 @@
 title: "Case Study"
 author: "Pratheek Eravelli & Kanav Bhatnagar"
 date: "3/26/2022"
-output: pdf_document
+output: html_document
 ---
 
 # Project Setup
@@ -108,11 +108,50 @@ vector_lim_y
 
 ```
 ```{r}
+high_lev_lower = prostate_high_leverage[prostate_high_leverage < vector_lim_y[1]]
+high_lev_upper = prostate_high_leverage[prostate_high_leverage > vector_lim_y[2]]
 
+leverage_range = rbind(high_lev_lower, high_lev_upper)
+leverage_range
 
 ```
 
+From the output above we can observe that none of the high leverage points can be considered "bad" high leverage points. 
 
+
+
+Now let us discuss OUTLIERS in the data:
+(1) We must find sudentized residuals residuals
+(2) Compute the bonferroni critical value
+(3) See if the residuals are greater than the absolute values of the conferroni critical value.
+(4) If any are then these are deemed as outliers in the data.
+```{r outliers}
+psa_residuals = rstudent(chosen_model)
+
+bonferroni_cv = qt(0.05/(2*n), n - p - 1)
+
+psa_residuals_sorted = sort(abs(psa_residuals), decreasing = TRUE)[1:10]
+
+psa_residuals_sorted
+print("Bonferroni Critical Values:")
+bonferroni_cv
+```
+From the above analysis we can see that only points 96 and 97 of the original data set are considered outliers. 
+
+
+Now let us discuss influential points in the data:
+(1)We must calculate the cooks distance for each point and see if there are any points with a distance greater than 1.
+```{r cooks_distance}
+prostate_cooks = cooks.distance(chosen_model)
+sort(prostate_cooks, decreasing = TRUE)[1:10]
+
+plot(prostate_cooks)
+
+```
+From the above analysis we can see that point 97 is all three things.
+Point 97 is a high leverage point, an outlier, and it is a highly influential points.
+
+This is the only point that has this characteristic in the actual model. 
 
 ## Model assumptions
 
