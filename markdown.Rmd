@@ -72,8 +72,46 @@ We see that all the variables in the model have a *p*-value less than 0.05, whic
 
 Thus, the final model we have is `psalevel =` `r prostate_lm_reduced_4$coefficients[1]` + `r prostate_lm_reduced_4$coefficients[2]` $\cdot$ `cancervolume` + `r prostate_lm_reduced_4$coefficients[3]` $\cdot$ `svi`.
 
+\newpage
 
 ## Unusual observations
+
+We will first look at identifying high leverage points. 
+```{r high_leverage}
+n = dim(prostate)[1] # Sample Size 
+chosen_model = prostate_lm_reduced_4
+p = length(variable.names(chosen_model)) # Predictors plus intercepts.
+
+prostate_leverages = lm.influence(chosen_model)$hat
+
+prostate_high_leverage = prostate_leverages[prostate_leverages > 2*p/n]
+prostate_high_leverage
+
+
+
+```
+We now have the following high leverage points at our disposal.
+We now need to find which of the following high leverage points can be considered "bad" high leverage points and which can be considered "good".
+```{r}
+
+
+  IQR_y = IQR(prostate$psalevel)
+
+QT1_y = quantile(prostate$psalevel, 0.25)
+QT3_y = quantile(prostate$psalevel, 0.75)
+
+lower_lim_y = QT1_y - IQR_y
+upper_lim_y = QT3_y + IQR_y
+
+vector_lim_y = c(lower_lim_y, upper_lim_y)
+vector_lim_y
+
+```
+```{r}
+
+
+```
+
 
 
 ## Model assumptions
