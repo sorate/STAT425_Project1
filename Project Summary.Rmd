@@ -80,9 +80,20 @@ Since both the normality and the constant variance assumptions were not met, we 
 
 We performed a log transform, and performed tests to check if the new model satisfied the model assumptions. The resultant linear model meets both the constant variance and normality assumptions, with *p*-values greater than the threshold of $0.05$ for both the studentized Breusch-Pagan test and a one-sample Kolmogorov-Smirnov test. The relevant graphs for the new model are also available in the appendix.
 
-## 4. Conclusion
 
-\pagebreak
+## 4. Conclusion
+From the results of the statistical analysis we have found that there exists some linear relationship between the natural log of the measure
+`psa level` and the measures `cancer volume` and `svi`. This relationship tells us that there exists some correlation between these measures. 
+
+We now know that there is some sort of relationship between these measures. What sort of information do these measures convey? 
+
+`cancer volume` is a measure of the size of the reported prostate cancer, the bigger the number the bigger the size of the tumor.
+
+`svi` is a measure of whether or not the prostate cancer is present within the blood vessels around the prostate. This value is either 0 or 1. 
+
+There is a relevant statistically significant correlation between the `log(psalevel)` and the `cancervolume` and `svi`
+
+\newpage
 
 # Appendix
 
