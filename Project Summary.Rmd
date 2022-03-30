@@ -82,7 +82,22 @@ We performed a log transform, and performed tests to check if the new model sati
 
 ## 4. Conclusion
 
+\pagebreak
 
 # Appendix
 
+```{r echo = FALSE}
+library(ggplot2)
+library(MASS)
+prostate = read.table('prostate.txt', header = FALSE)
+colnames(prostate) = c('ID', 'psalevel', 'cancervolume', 'prostateweight', 
+                       'age', 'hyperplasia', 'svi', 'capsular', 'gleason')
+prostate.lm1 = lm(psalevel ~ cancervolume + svi, data = prostate)
+plot(prostate.lm1, which = 1, sub = "Residuals vs Fitted Plot Pre-Transformation")
+plot(prostate.lm1, which = 2, sub = "Normal Q-Q Plot Pre-Transformation")
+boxcox(prostate.lm1)
+prostate.lm2 = lm(log(psalevel) ~ cancervolume + svi, data = prostate)
+plot(prostate.lm2, which = 1, sub = "Residuals vs Fitted Plot Post-Transformation")
+plot(prostate.lm2, which = 2, sub = "Normal Q-Q Plot Post-Transformation")
+```
 
